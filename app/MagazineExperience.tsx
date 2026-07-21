@@ -364,6 +364,51 @@ const ClosingPage = forwardRef<HTMLDivElement>(function ClosingPage(_, ref) {
   );
 });
 
+type LevelFeature = {
+  readonly level: string;
+  readonly investment: string;
+  readonly title: string;
+  readonly introduction: string;
+  readonly pullQuote: string;
+  readonly audience: string;
+  readonly value: string;
+  readonly benefits: readonly { readonly title: string; readonly copy: string }[];
+};
+
+function MobileLevelPage({ feature, image, number }: { feature: LevelFeature; image: string; number: string }) {
+  return <article className="mobile-page mobile-level-page">
+    <p className="mobile-kicker">PARTNERSHIP LEVEL · {number} OF 04</p>
+    <h2>{feature.level}</h2>
+    <p className="mobile-serif-title">{feature.title}</p>
+    <div className="mobile-investment"><span>Investment</span><strong>{feature.investment}</strong></div>
+    <figure className="mobile-hero"><img src={image} alt={`${feature.level} community impact`} /></figure>
+    <blockquote>“{feature.pullQuote}”</blockquote>
+    <p>{feature.introduction}</p>
+    <div className="mobile-context"><section><h3>Who It Is For</h3><p>{feature.audience}</p></section><section><h3>Why It Matters</h3><p>{feature.value}</p></section></div>
+    <section className="mobile-benefits"><h3>Value Created</h3>{feature.benefits.map((benefit, index) => <article key={benefit.title}><span>0{index + 1}</span><div><h4>{benefit.title}</h4><p>{benefit.copy}</p></div></article>)}</section>
+    <aside className="mobile-custom"><strong>Need a custom partnership?</strong><span>Let&apos;s build one together.</span><a href={`mailto:${p.contactEmail}`}>{p.contactEmail}</a></aside>
+  </article>;
+}
+
+function MobilePublicationPage({ page }: { page: number }) {
+  if (page === 1) return <article className="mobile-page mobile-cover">
+    <p className="mobile-kicker">OFFICIAL SPONSORSHIP PUBLICATION · 2026 EDITION</p><h1>Partner<br />With Purpose</h1><p className="mobile-serif-title">{p.mastheadDescriptor}</p>
+    <div className="mobile-map-mark" aria-hidden="true" /><h2>{p.eventName}</h2><p>{p.subtitle}</p><blockquote>“{p.missionStatement}”</blockquote>
+    <dl><div><dt>Date</dt><dd>{p.date}</dd></div><div><dt>Time</dt><dd>{p.time}</dd></div><div><dt>Place</dt><dd>{p.city}</dd></div></dl><p className="mobile-tagline">{p.tagline}</p>
+  </article>;
+  if (page === 2) return <article className="mobile-page"><p className="mobile-kicker">LETTER FROM THE HOSTS</p><h2>A Letter <em>From the Hosts</em></h2><blockquote>“{p.hostLetter.pullQuote}”</blockquote><h3>{p.hostLetter.salutation}</h3>{p.hostLetter.paragraphs.map(text => <p key={text}>{text}</p>)}<p className="mobile-closing">{p.hostLetter.closing}</p><ul className="mobile-signatories">{p.hostLetter.signatories.map(name => <li key={name}>{name}</li>)}</ul></article>;
+  if (page === 3) return <article className="mobile-page"><p className="mobile-kicker">THE EXPERIENCE</p><h2>About <em>the Experience</em></h2><blockquote>“{p.aboutExperience.statement}”</blockquote><p>{p.aboutExperience.description}</p><div className="mobile-stat"><strong>50</strong><span>Families · One Shared Community</span></div><h3>Seven Points of Care</h3><ul className="mobile-list">{p.aboutExperience.components.map(item => <li key={item}>{item}</li>)}</ul><figure className="mobile-hero"><img src="/assets/editorial/community-preparation-wide.png" alt="Volunteers and families preparing clothing, backpacks, and school supplies" /></figure></article>;
+  if (page === 4) return <article className="mobile-page"><p className="mobile-kicker">COMMUNITY IMPACT</p><h2>{p.emotionalFeature.title}</h2><figure className="mobile-hero"><img src="/assets/editorial/more-than-a-backpack-hero.png" alt="A child receiving a backpack with support from community volunteers" /></figure><blockquote>“{p.emotionalFeature.statement}”</blockquote><p>{p.emotionalFeature.story}</p><div className="mobile-stats">{p.emotionalFeature.statistics.map(stat => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div></article>;
+  if (page === 5) return <article className="mobile-page"><p className="mobile-kicker">FOUNDING PARTNERS</p><h2>{p.partnershipFeature.title}</h2><blockquote>“{p.partnershipFeature.pullQuote}”</blockquote><p>{p.partnershipFeature.introduction}</p><section className="mobile-hosts">{p.hosts.map((host,index) => <article key={host.name}><span>0{index+1}</span><img src={host.logo} alt={`${host.name} logo`} /><h3>{host.name}</h3><p>{host.mission}</p><small>{host.role}</small></article>)}</section></article>;
+  if (page === 6) return <article className="mobile-page"><p className="mobile-kicker">PARTNERSHIP OPPORTUNITIES</p><h2>{p.opportunityFeature.title}</h2><figure className="mobile-hero"><img src="/assets/editorial/become-part-of-story.png" alt="A family selecting school supplies with community volunteers" /></figure><blockquote>“{p.opportunityFeature.pullQuote}”</blockquote>{p.opportunityFeature.blocks.map(block => <section className="mobile-section" key={block.label}><h3>{block.label}</h3><p>{block.copy}</p></section>)}<h3>Part of Something Meaningful</h3><ul className="mobile-list">{p.opportunityFeature.impactAreas.map(item => <li key={item}>{item}</li>)}</ul></article>;
+  if (page === 7) return <article className="mobile-page"><p className="mobile-kicker">PART II · AN INVITATION TO ACTION</p><h2>{p.sponsorshipIntroduction.title}</h2><p className="mobile-serif-title">{p.sponsorshipIntroduction.statement}</p><blockquote>“{p.sponsorshipIntroduction.pullQuote}”</blockquote><p>{p.sponsorshipIntroduction.introduction}</p><section className="mobile-tiers">{p.sponsorshipIntroduction.tiers.map((tier,index) => <article key={tier.name}><span>0{index+1}</span><h3>{tier.name}</h3><p>{tier.description}</p></article>)}</section></article>;
+  if (page === 8) return <MobileLevelPage feature={p.communityPartnerFeature} image="/assets/editorial/community-partner-impact.png" number="01" />;
+  if (page === 9) return <MobileLevelPage feature={p.supportingSponsorFeature} image="/assets/editorial/supporting-sponsor-impact.png" number="02" />;
+  if (page === 10) return <MobileLevelPage feature={p.presentingSponsorFeature} image="/assets/editorial/presenting-sponsor-impact.png" number="03" />;
+  if (page === 11) return <MobileLevelPage feature={p.titlePartnerFeature} image="/assets/editorial/title-partner-impact.png" number="04" />;
+  return <article className="mobile-page mobile-closing-page"><p className="mobile-kicker">BEGIN THE CONVERSATION</p><h2>{p.closingFeature.title}</h2><figure className="mobile-hero"><img src="/assets/editorial/closing-community-impact.png" alt="Richmond families and volunteers celebrating community impact" /></figure>{p.closingFeature.messages.map(text => <p key={text}>{text}</p>)}<a className="mobile-email" href={`mailto:${p.closingFeature.email}`}>{p.closingFeature.email}</a><blockquote>“{p.closingFeature.quote}”</blockquote><section className="mobile-host-logos"><h3>Hosted in Partnership With</h3>{p.hosts.map(host => <figure key={host.name}><img src={host.logo} alt={`${host.name} logo`} /><figcaption>{host.name}</figcaption></figure>)}</section></article>;
+}
+
 export default function MagazineExperience() {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -377,6 +422,12 @@ export default function MagazineExperience() {
     bookRef.current?.pageFlip().turnToPage(index);
     setPage(index + 1);
     setThumbs(false);
+  }, []);
+  const goMobile = useCallback((next: number) => {
+    const destination = Math.max(1, Math.min(p.pageTitles.length, next));
+    setPage(destination);
+    setThumbs(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   const share = async () => {
     const data = { title: `${p.eventName} | ${p.publicationTitle}`, text: p.mastheadDescriptor, url: window.location.href };
@@ -423,9 +474,10 @@ export default function MagazineExperience() {
         <div className="opening-skyline" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/><i/></div>
       </section>
 
-      <section className="reader" aria-label="Interactive sponsorship magazine" aria-hidden={!open}>
+      <section className="reader desktop-reader" aria-label="Interactive sponsorship magazine" aria-hidden={!open}>
         <header className="reader-topline"><button onClick={() => setOpen(false)}>← RETURN TO COVER</button><p>{p.publicationTitle} <span>/</span> {p.editionLabel}</p><button onClick={() => setThumbs(!thumbs)}>THUMBNAILS</button></header>
         <div className="book-stage">
+          <div className="book-viewport">
           <HTMLFlipBook ref={bookRef as never} width={650} height={820} size="stretch" minWidth={300} maxWidth={650} minHeight={420} maxHeight={820} showCover usePortrait mobileScrollSupport clickEventForward useMouseEvents swipeDistance={30} drawShadow flippingTime={700} maxShadowOpacity={0.22} autoSize startPage={0} startZIndex={0} showPageCorners disableFlipByClick={false} onFlip={(event: { data: number }) => setPage(event.data + 1)} className="flipbook" style={{}}>
             <CoverPage />
             <LetterPage />
@@ -440,6 +492,7 @@ export default function MagazineExperience() {
             <TitlePartnerPage />
             <ClosingPage />
           </HTMLFlipBook>
+          </div>
         </div>
         <footer className="reader-controls">
           <button aria-label="Previous page" onClick={() => bookRef.current?.pageFlip().flipPrev()}>←</button>
@@ -450,6 +503,12 @@ export default function MagazineExperience() {
           <button onClick={fullscreen}>FULLSCREEN</button><button onClick={share}>SHARE</button><button onClick={download}>PDF</button>
         </footer>
         {thumbs && <aside className="thumbnail-drawer" aria-label="Page navigation"><button className="thumbnail-close" onClick={() => setThumbs(false)}>CLOSE</button><p>ALL PAGES</p><nav>{p.pageTitles.map((title, index) => <button className={page === index + 1 ? "is-current" : ""} aria-current={page === index + 1 ? "page" : undefined} onClick={() => goToPage(index)} key={title}><strong>{String(index + 1).padStart(2, "0")}</strong><span>{title}</span></button>)}</nav><small>SELECT A PAGE TO OPEN IT IN THE MAGAZINE.</small></aside>}
+      </section>
+      <section className="mobile-reader" aria-label="Mobile sponsorship publication" aria-hidden={!open}>
+        <header className="mobile-reader-header"><button onClick={() => setOpen(false)} aria-label="Return to opening cover">← Cover</button><p><strong>{String(page).padStart(2,"0")}</strong> / {p.pageTitles.length}</p><button onClick={() => setThumbs(!thumbs)} aria-expanded={thumbs}>Pages</button></header>
+        <div className="mobile-page-wrap"><MobilePublicationPage page={page} /></div>
+        <nav className="mobile-reader-nav" aria-label="Publication navigation"><button disabled={page === 1} onClick={() => goMobile(page - 1)}>← Previous</button><span>{p.pageTitles[page - 1]}</span><button disabled={page === p.pageTitles.length} onClick={() => goMobile(page + 1)}>Next →</button></nav>
+        {thumbs && <aside className="mobile-page-menu" aria-label="Choose a page"><button className="mobile-menu-close" onClick={() => setThumbs(false)}>Close</button><h2>All Pages</h2>{p.pageTitles.map((title,index) => <button aria-current={page === index + 1 ? "page" : undefined} onClick={() => goMobile(index + 1)} key={title}><strong>{String(index + 1).padStart(2,"0")}</strong><span>{title}</span></button>)}</aside>}
       </section>
       <div className={`notice ${notice ? "show" : ""}`} role="status">{notice}</div>
     </main>

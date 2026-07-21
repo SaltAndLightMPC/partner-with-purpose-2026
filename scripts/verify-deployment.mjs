@@ -14,6 +14,7 @@ const page = read("app/page.tsx");
 const magazine = read("app/MagazineExperience.tsx");
 const config = read("app/publication-config.ts");
 const layout = read("app/layout.tsx");
+const styles = read("app/globals.css");
 const source = `${page}\n${magazine}\n${config}\n${layout}`;
 
 if (/export default function Home/.test(page) && /<MagazineExperience\s*\/>/.test(page)) {
@@ -42,6 +43,16 @@ const requiredControls = ["flipNext", "flipPrev", "turnToPage", "FULLSCREEN", "S
 const missingControls = requiredControls.filter((control) => !magazine.includes(control));
 if (missingControls.length === 0) pass("page turns and reader controls are present");
 else fail(`missing controls: ${missingControls.join(", ")}`);
+
+const mobileRequirements = ["MobilePublicationPage", "mobile-reader-nav", "mobile-page-menu", "goMobile"];
+const missingMobile = mobileRequirements.filter((item) => !magazine.includes(item));
+if (missingMobile.length === 0 && /@media \(max-width:700px\)/.test(styles) && /font-size:17px/.test(styles)) {
+  pass("dedicated reflowed mobile reader and touch navigation are present");
+} else fail(`mobile reading architecture is incomplete: ${missingMobile.join(", ")}`);
+
+if (/min-width:701px\) and \(max-width:1399px/.test(styles) && /max-width:590px/.test(styles) && /min-width:1400px/.test(styles)) {
+  pass("desktop spread and single-page laptop/tablet breakpoints are present");
+} else fail("responsive magazine breakpoints are incomplete");
 
 const expectedCopy = ["$250", "$500", "$1,000", "$2,500", "backtoschoolonmain@gmail.com"];
 const missingCopy = expectedCopy.filter((value) => !config.includes(value));
