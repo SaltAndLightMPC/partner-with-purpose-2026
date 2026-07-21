@@ -44,11 +44,15 @@ const missingControls = requiredControls.filter((control) => !magazine.includes(
 if (missingControls.length === 0) pass("page turns and reader controls are present");
 else fail(`missing controls: ${missingControls.join(", ")}`);
 
-const mobileRequirements = ["MobilePublicationPage", "mobile-reader-nav", "mobile-page-menu", "goMobile"];
+const mobileRequirements = ["MobilePublicationPage", "mobile-reader-nav", "mobile-page-menu", "goMobile", "onMobileTouchStart", "onMobileTouchEnd", "mobile-reader-tools"];
 const missingMobile = mobileRequirements.filter((item) => !magazine.includes(item));
 if (missingMobile.length === 0 && /@media \(max-width:700px\)/.test(styles) && /font-size:17px/.test(styles)) {
   pass("dedicated reflowed mobile reader and touch navigation are present");
 } else fail(`mobile reading architecture is incomplete: ${missingMobile.join(", ")}`);
+
+if (/\.experience:not\(\.is-open\)\{height:100svh/.test(styles) && /env\(safe-area-inset-top\)/.test(styles) && /\.opening-actions \.primary\{width:100%;min-height:52px/.test(styles)) {
+  pass("portrait opening screen keeps the primary action visible and safe-area aware");
+} else fail("portrait opening screen safeguards are incomplete");
 
 if (/min-width:701px\) and \(max-width:1399px/.test(styles) && /max-width:590px/.test(styles) && /min-width:1400px/.test(styles)) {
   pass("desktop spread and single-page laptop/tablet breakpoints are present");

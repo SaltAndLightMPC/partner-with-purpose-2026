@@ -415,7 +415,9 @@ export default function MagazineExperience() {
   const [sound, setSound] = useState(false);
   const [thumbs, setThumbs] = useState(false);
   const [notice, setNotice] = useState("");
+  const [mobileDirection, setMobileDirection] = useState<"next" | "previous">("next");
   const bookRef = useRef<FlipApi | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const download = useCallback(() => window.print(), []);
   const goToPage = useCallback((index: number) => {
@@ -425,10 +427,25 @@ export default function MagazineExperience() {
   }, []);
   const goMobile = useCallback((next: number) => {
     const destination = Math.max(1, Math.min(p.pageTitles.length, next));
+    setMobileDirection(destination < page ? "previous" : "next");
     setPage(destination);
     setThumbs(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+  const onMobileTouchStart = useCallback((event: React.TouchEvent) => {
+    const touch = event.changedTouches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
   }, []);
+  const onMobileTouchEnd = useCallback((event: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStart.current.x;
+    const dy = touch.clientY - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
+    if (dx < 0) goMobile(page + 1);
+    else goMobile(page - 1);
+  }, [goMobile, page]);
   const share = async () => {
     const data = { title: `${p.eventName} | ${p.publicationTitle}`, text: p.mastheadDescriptor, url: window.location.href };
     if (navigator.share) await navigator.share(data).catch(() => undefined);
@@ -505,8 +522,9 @@ export default function MagazineExperience() {
         {thumbs && <aside className="thumbnail-drawer" aria-label="Page navigation"><button className="thumbnail-close" onClick={() => setThumbs(false)}>CLOSE</button><p>ALL PAGES</p><nav>{p.pageTitles.map((title, index) => <button className={page === index + 1 ? "is-current" : ""} aria-current={page === index + 1 ? "page" : undefined} onClick={() => goToPage(index)} key={title}><strong>{String(index + 1).padStart(2, "0")}</strong><span>{title}</span></button>)}</nav><small>SELECT A PAGE TO OPEN IT IN THE MAGAZINE.</small></aside>}
       </section>
       <section className="mobile-reader" aria-label="Mobile sponsorship publication" aria-hidden={!open}>
-        <header className="mobile-reader-header"><button onClick={() => setOpen(false)} aria-label="Return to opening cover">← Cover</button><p><strong>{String(page).padStart(2,"0")}</strong> / {p.pageTitles.length}</p><button onClick={() => setThumbs(!thumbs)} aria-expanded={thumbs}>Pages</button></header>
-        <div className="mobile-page-wrap"><MobilePublicationPage page={page} /></div>
+        <header className="mobile-reader-header"><button onClick={() => setOpen(false)} aria-label="Return to opening cover">← Cover</button><p aria-live="polite"><strong>{String(page).padStart(2,"0")}</strong> / {p.pageTitles.length}</p><button onClick={() => setThumbs(!thumbs)} aria-expanded={thumbs}>Pages</button></header>
+        <div key={page} className={`mobile-page-wrap mobile-page-${mobileDirection}`} onTouchStart={onMobileTouchStart} onTouchEnd={onMobileTouchEnd}><MobilePublicationPage page={page} /></div>
+        <div className="mobile-reader-tools" aria-label="Reader tools"><button onClick={() => setSound(!sound)} aria-pressed={sound}>Sound {sound ? "On" : "Off"}</button><button onClick={share}>Share</button><button onClick={download}>PDF</button><button onClick={fullscreen}>Full Screen</button></div>
         <nav className="mobile-reader-nav" aria-label="Publication navigation"><button disabled={page === 1} onClick={() => goMobile(page - 1)}>← Previous</button><span>{p.pageTitles[page - 1]}</span><button disabled={page === p.pageTitles.length} onClick={() => goMobile(page + 1)}>Next →</button></nav>
         {thumbs && <aside className="mobile-page-menu" aria-label="Choose a page"><button className="mobile-menu-close" onClick={() => setThumbs(false)}>Close</button><h2>All Pages</h2>{p.pageTitles.map((title,index) => <button aria-current={page === index + 1 ? "page" : undefined} onClick={() => goMobile(index + 1)} key={title}><strong>{String(index + 1).padStart(2,"0")}</strong><span>{title}</span></button>)}</aside>}
       </section>
