@@ -25,3 +25,4 @@ npm start
 Import this repository into Vercel using the **Next.js** framework preset. Leave the root directory at the repository root and leave the output directory blank.
 
 No environment variables are required. `NEXT_PUBLIC_SITE_URL` is optional and may be set to the final canonical production URL.
+Connected to Vercel
